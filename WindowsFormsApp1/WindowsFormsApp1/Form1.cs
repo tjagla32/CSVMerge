@@ -29,10 +29,9 @@ namespace WindowsFormsApp1
 
             while ((line = file.ReadLine()) != null)
             {
-
-                if (!line.Contains(blankRow))
+                //if (!line.Contains(blankRow))
                 {
-                    if(*numberOfFile == 1)
+                    if (*numberOfFile == 1)
                         textBox1.Text += line + Environment.NewLine;
                     else
                     {
@@ -64,13 +63,13 @@ namespace WindowsFormsApp1
         {
             int i = 1; //numer pliku
             int* ptr = &i; //wskaźnik - w funkcji liczy, który plik jest obsługiwany
-            string read = "C:/Users/Tomek/Desktop/szczotki.csv";
-            string read2 = "C:/Users/Tomek/Desktop/worki.csv";
+            string read = "C:/Users/Tomek/Desktop/export_1.csv";
+            string read2 = "C:/Users/Tomek/Desktop/export_1.csv";
 
-            string write = "C:/Users/Tomek/Desktop/wynik.csv";
+            string write = "C:/Users/Tomek/Desktop/export_wynik.csv";
 
             saveToFile(read, write, ptr);
-            saveToFile(read2, write, ptr);
+            //saveToFile(read2, write, ptr);
             
 
             //https://www.youtube.com/watch?v=C7t8qO3iI5s
