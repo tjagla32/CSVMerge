@@ -17,28 +17,18 @@ namespace WindowsFormsApp1
 
         unsafe void saveToFile(string read, string write, int *numberOfFile)
         {
+           
+            var lines = File.ReadAllLines(read);
 
-            String line;
-            System.IO.StreamReader file = new System.IO.StreamReader(read, Encoding.GetEncoding("Windows-1250"));
-            
-            bool firstRow = false; //usuwa tekst z pierwszego rzędu
-
-            while ((line = file.ReadLine()) != null)
+            if (*numberOfFile != 1)
             {
-                {
-                    if (*numberOfFile == 1)
-                        textBox1.Text += line + Environment.NewLine;
-                    else
-                    {
-                        if (!firstRow)
-                            firstRow = !firstRow;
-                        else
-                            textBox1.Text += line + Environment.NewLine;
-                    }
-                }
-
+                lines = lines.Skip(1).ToArray();
+                File.AppendAllLines(write, lines);
             }
-            File.WriteAllText(write, textBox1.Text, Encoding.GetEncoding("Windows-1250"));
+            else
+            {
+                File.WriteAllLines(write, lines);
+            }
             *numberOfFile += 1;
         }
 
@@ -46,11 +36,6 @@ namespace WindowsFormsApp1
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -69,42 +54,42 @@ namespace WindowsFormsApp1
                 String path = dialog.FileName; // get name of file
                 using (StreamReader reader = new StreamReader(new FileStream(path, FileMode.Open), new UTF8Encoding())) // do anything you want, e.g. read it
                 {
-                    for(int i=0; i< dialog.SafeFileNames.Length; i++)
-                        textBox3.Text += dialog.SafeFileNames[i] + Environment.NewLine;
+                    for (int i = 0; i < dialog.SafeFileNames.Length; i++)
+                        textBox3.Text += dialog.SafeFileNames[i] 
+                            + Environment.NewLine;
                 }
+                textBox3.Text += Environment.NewLine + Environment.NewLine;
             }
         }
 
          public unsafe void find(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             int i = 1; //numer pliku
             int* ptr = &i; //wskaźnik - w funkcji liczy, który plik jest obsługiwany
-
-           // textBox1.Text = "Wybrane pliki: " + dialog.SafeFileNames.Length + Environment.NewLine;
+            
 
 
             string out_path = Path.GetDirectoryName(dialog.FileNames[0]);
             string write_file = out_path + @"\" + textBox2.Text + ".csv";
 
-            textBox1.Text += "Dane będą zapisane w: " + Environment.NewLine + write_file + Environment.NewLine + Environment.NewLine;
+            textBox3.Text += "Dane będą zapisane w: " + Environment.NewLine + write_file + Environment.NewLine + Environment.NewLine;
 
 
             for (int n = 0; n < dialog.SafeFileNames.Length; n++)
             {
-                textBox1.Text += "Scalam plik nr " + (n+1) + ": " + Environment.NewLine;
-                textBox1.Text += dialog.FileNames[n] + Environment.NewLine + Environment.NewLine;
+                textBox3.Text += "Scalam plik nr " + (n+1) + ": " + Environment.NewLine;
+                textBox3.Text += dialog.FileNames[n] + Environment.NewLine + Environment.NewLine;
                 saveToFile(dialog.FileNames[n], write_file, ptr);
             }
-                
 
-            //saveToFile(read, write, ptr);
-            //saveToFile(read2, write, ptr);
+            textBox1.Text = "Zakończono scalanie plików!";
 
+            button3.Visible = true;
+            button1.Enabled = false;
+            Cursor.Current = Cursors.Arrow;
 
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
 
         }
 
@@ -118,7 +103,10 @@ namespace WindowsFormsApp1
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            if( (textBox2.Text != "") && (textBox3.Text != "") )
+            textBox3.SelectionStart = textBox3.Text.Length;
+            textBox3.ScrollToCaret();
+
+            if ( (textBox2.Text != "") && (textBox3.Text != "") )
                 button1.Enabled = true;
             else
                 button1.Enabled = false;
@@ -128,6 +116,11 @@ namespace WindowsFormsApp1
         {
             textBox1.SelectionStart = textBox1.Text.Length;
             textBox1.ScrollToCaret();
+        }
+
+        private void zakoncz(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
